@@ -26,9 +26,9 @@ def match_and_insert(match, key, str, score, weight):
         j = 0
         for i in range(len(str)):
             if(i == match_idx[j][0]):
-                new_str = new_str + '<font color="#FF0000">' + str[i]
+                new_str = new_str + '<span style="background-color:#FFFF00">' + str[i]
             elif(i == match_idx[j][1]):
-                new_str = new_str + '</font>' + str[i]
+                new_str = new_str + '</span>' + str[i]
                 j = j + 1
                 if(j >= len(match_idx)):
                     new_str = new_str + str[i+1:]

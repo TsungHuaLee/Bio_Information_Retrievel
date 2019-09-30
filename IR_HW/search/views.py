@@ -20,13 +20,14 @@ class xmldata:
 
 totol_num = 0
 
-filetype = ''
+filetype = 'xml'
 
 # Create your views here.
 def index(request):
     return render(request, 'search/index.html', locals())
 
 def search(request):
+    global filetype
     if request.method == 'GET':
         key = request.GET.get('search')
 
@@ -37,11 +38,12 @@ def search(request):
             full_path = BASE_DIR + '/search/data/twitter_data'
 
         data = full_text_match(full_path, key)
-        print(data)
+        print(filetype, data)
     return render(request, 'search/index.html', locals())
 
 
 def upload_file(request):
+    global filetype
     if request.method == 'POST' and request.FILES['myfile']:
         myfile = request.FILES['myfile']
         fs = FileSystemStorage()
