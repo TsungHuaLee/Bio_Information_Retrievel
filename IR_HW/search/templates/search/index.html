@@ -1,0 +1,87 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.css" rel="stylesheet" type='text/css'>
+    <style>
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            text-align: center;
+        }
+
+        table {
+            margin-left: 100px;
+            margin-right: 100px;
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <!-- .navbar-brand 左上LOGO位置 -->
+        <a class="navbar-brand" href="index.html">
+            <span class="h3 mx-1">IR</span>
+        </a>
+        <!-- .navbar-toggler 漢堡式選單按鈕 -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <!-- .navbar-toggler-icon 漢堡式選單Icon -->
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <!-- .collapse.navbar-collapse 用於外層中斷點群組和隱藏導覽列內容 -->
+        <!-- 選單項目&漢堡式折疊選單 -->
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <!-- active表示當前頁面 -->
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- upload file -->
+        <form method="post" enctype="multipart/form-data" action="upload">
+            {% csrf_token %}
+            <input type="file" name="myfile">
+            <button type="submit">Upload</button>
+        </form>
+
+        <!-- search -->
+        <form action='search' method='GET'>
+            <div class='form-group' , align="center">
+                <input type="text" placeholder="key" name="search">
+                <button type='submit' class='btn btn-success'>search</button>
+            </div>
+        </form>
+
+        <!-- body -->
+        <table class="search_result table table-striped" align="center" style="margin:10px 0px 0px 0px">
+            <tbody>
+                {% autoescape off %}
+                {% for one in data %}
+                <tr>
+                    <td>{{ one.title }}</td>
+                    <td>Score:{{ one.score }}</td>
+                </tr>
+                <tr>
+                    <td>{{ one.content }}</td>
+                </tr>
+                {% endfor %}
+                {% endautoescape %}
+            </tbody>
+        </table>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+
+</html>
