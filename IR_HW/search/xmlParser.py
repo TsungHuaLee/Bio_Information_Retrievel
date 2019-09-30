@@ -25,7 +25,6 @@ def xmlParser(file_name):
         # next(inputFile)
         print("file_name",file_name)
         fileContent = inputFile.read()
-        print(fileContent)
         f = open(data_path, "w", encoding='UTF-8')
         # parse multi root xml
         tree = ET.fromstring("<fake>" + fileContent +"</fake>")

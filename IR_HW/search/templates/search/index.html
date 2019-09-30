@@ -46,12 +46,13 @@
 
     <div class="container">
         <!-- upload file -->
+        <br>
         <form method="post" enctype="multipart/form-data" action="upload">
             {% csrf_token %}
             <input type="file" name="myfile">
             <button type="submit">Upload</button>
         </form>
-
+        <br>
         <!-- search -->
         <form action='search' method='GET'>
             <div class='form-group' , align="center">

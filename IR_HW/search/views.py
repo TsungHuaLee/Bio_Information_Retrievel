@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from .xmlParser import xmlParser
+from .jsonParser import jsonParser
 from .full_text_match import full_text_match
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -19,17 +20,22 @@ class xmldata:
 
 totol_num = 0
 
+filetype = ''
+
 # Create your views here.
 def index(request):
     return render(request, 'search/index.html', locals())
-
 
 def search(request):
     if request.method == 'GET':
         key = request.GET.get('search')
 
         BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        full_path = BASE_DIR + '/search/data/pubmed_data'
+        if(filetype == 'xml'):
+            full_path = BASE_DIR + '/search/data/pubmed_data'
+        else:
+            full_path = BASE_DIR + '/search/data/twitter_data'
+
         data = full_text_match(full_path, key)
         print(data)
     return render(request, 'search/index.html', locals())
@@ -46,5 +52,10 @@ def upload_file(request):
         full_path = os.path.join(BASE_DIR, uploaded_file_url)
 
         # return first page data & total num data
-        data, total_num = xmlParser(full_path)
+        if(uploaded_file_url[-3:] == "xml"):
+            data, total_num = xmlParser(full_path)
+            filetype = 'xml'
+        else:
+            data, total_num = jsonParser(full_path)
+            filetype = 'json'
     return render(request, 'search/index.html', locals())
