@@ -71,7 +71,7 @@
                     <td>Score:{{ one.score }}</td>
                 </tr>
                 <tr>
-                    <td>{{ one.content }}</td>
+                    <td>{{ one.content }} <br> char_count: {{one.char_count}}&nbsp word_count: {{one.word_count}}&nbsp sentence_count: {{one.sentence_count}}</td>
                 </tr>
                 {% endfor %}
                 {% endautoescape %}
