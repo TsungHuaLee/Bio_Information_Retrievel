@@ -54,9 +54,9 @@
 
     <div class="container">
         <!-- upload file -->
-        <h1>PubMed</h1>
+        <h1>Twitter</h1>
 
-        <form method="post" enctype="multipart/form-data" action="upload">
+        <form method="post" enctype="multipart/form-data" action="tweetupload">
             {% csrf_token %}
             <input type="file" name="myfile">
             <button type="submit">Upload</button>
@@ -74,28 +74,22 @@
         <table class="search_result table table-striped" align="center" style="margin:10px 0px 0px 0px">
             {% autoescape off %}
             {% for one in data %}
-                <tbody>
-                        <tr>
-                            <td>
-                                {{ one.title }}
-                                <div style="display:inline; float:right;">
-                                    <font color='red'>Score:{{ one.score }}</font>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                {{ one.content }}
-                                <div class="alert alert-info" role="alert">
-                                    <p>char_count: {{one.char_count}}</p>
-                                    <hr>
-                                    <p>word_count: {{one.word_count}}</p>
-                                    <hr>
-                                    <p>sentence_count: {{one.sentence_count}}</p>
-                                </div>
-                            </td>
-                        </tr>
-                <tbody>
+                <div>
+                    {{ one.user }}
+                    <div style="display:inline; float:right;">
+                        <font color='red'>Score:{{ one.score }}</font>
+                    </div>
+
+                    <p>{{ one.content }}</p>
+                    <div class="alert alert-info" role="alert">
+                        <p>char_count: {{one.char_count}}</p>
+                        <hr>
+                        <p>word_count: {{one.word_count}}</p>
+                        <hr>
+                        <p>sentence_count: {{one.sentence_count}}</p>
+                    </div>
+                    <hr>
+                </div>
             {% endfor %}
             {% endautoescape %}
         </table>
