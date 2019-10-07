@@ -3,11 +3,13 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from .xmlParser import xmlParser
 from .jsonParser import jsonParser
+import re
 from .full_text_match import full_text_match
-from django.http import HttpResponseRedirect
-from django.shortcuts import render
-from .forms import UploadFileForm
 import os
+totol_num = 0
+
+filetype = 'xml'
+
 
 class xmldata:
     def __init__(self, title=None, content=None, char_count=None, word_count=None, sentence_count=None, score=None):
@@ -18,13 +20,11 @@ class xmldata:
         self.sentence_count = sentence_count
         self.score = score
 
-totol_num = 0
-
-filetype = 'xml'
 
 # Create your views here.
 def index(request):
     return render(request, 'search/index.html', locals())
+
 
 def search(request):
     global filetype
@@ -57,7 +57,11 @@ def upload_file(request):
         if(uploaded_file_url[-3:] == "xml"):
             data, total_num = xmlParser(full_path)
             filetype = 'xml'
-        else:
-            data, total_num = jsonParser(full_path)
-            filetype = 'json'
+        # else:
+        #     data, total_num = jsonParser(full_path)
+        #     filetype = 'json'
     return render(request, 'search/index.html', locals())
+
+
+def twitter(request):
+    return render(request, 'search/twitter.html', locals())

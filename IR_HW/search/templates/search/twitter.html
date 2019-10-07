@@ -40,13 +40,22 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <!-- active表示當前頁面 -->
+                <li class="nav-item active">
+                    <a class="nav-link" href="/">PubMed<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href='/twitter'>Twitter</a>
+                </li>
             </ul>
         </div>
+
+
     </nav>
 
     <div class="container">
         <!-- upload file -->
-        <br>
+        <h1>PubMed</h1>
+
         <form method="post" enctype="multipart/form-data" action="upload">
             {% csrf_token %}
             <input type="file" name="myfile">
@@ -63,19 +72,32 @@
 
         <!-- body -->
         <table class="search_result table table-striped" align="center" style="margin:10px 0px 0px 0px">
-            <tbody>
-                {% autoescape off %}
-                {% for one in data %}
-                <tr>
-                    <td>{{ one.title }}</td>
-                    <td>Score:{{ one.score }}</td>
-                </tr>
-                <tr>
-                    <td>{{ one.content }}</td>
-                </tr>
-                {% endfor %}
-                {% endautoescape %}
-            </tbody>
+            {% autoescape off %}
+            {% for one in data %}
+                <tbody>
+                        <tr>
+                            <td>
+                                {{ one.title }}
+                                <div style="display:inline; float:right;">
+                                    <font color='red'>Score:{{ one.score }}</font>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {{ one.content }}
+                                <div class="alert alert-info" role="alert">
+                                    <p>char_count: {{one.char_count}}</p>
+                                    <hr>
+                                    <p>word_count: {{one.word_count}}</p>
+                                    <hr>
+                                    <p>sentence_count: {{one.sentence_count}}</p>
+                                </div>
+                            </td>
+                        </tr>
+                <tbody>
+            {% endfor %}
+            {% endautoescape %}
         </table>
     </div>
 
