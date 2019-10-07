@@ -61,7 +61,7 @@ def xmlParser(file_name):
                         word_count = word_count + len(re.split(r'\w+', content))
                     else:
                         content = ''.join(abstractText.itertext()) + ' <br>'
-                        char_count = char_count + len(content)
+                        char_count = char_count + len(re.split(r'\S', content))
                         word_count = word_count + \
                             len(re.split(r'\w+', content))
 
