@@ -22,4 +22,5 @@ urlpatterns = [
     path('', views.index),
     path('upload', views.upload_file),
     path('search', views.search),
+    path('twitter', views.twitter),
 ]
