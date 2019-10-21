@@ -72,24 +72,24 @@ def xmlParser(file_name):
 
             sentence_count = len(match_idx)
 
-            new_str = ""
-            if(len(match_idx) > 0):
-                j = 0
-                # iterate each char
-                for k in range(len(content)):
-                    if(k == match_idx[j][0]):
-                        new_str = new_str + \
-                            '<span style="background-color:#FFB3FF">' + content[k]
-                    elif(k == match_idx[j][1]):
-                        new_str = new_str + '&nbsp</span>' + content[k]
-                        j = j + 1
-                        if(j >= len(match_idx)):
-                            new_str = new_str + content[k + 1:]
-                            break
-                    else:
-                        new_str = new_str + content[k]
-                # add span tag, it also add \n for no reason
-                content = new_str.replace('\n', ' ')
+            # new_str = ""
+            # if(len(match_idx) > 0):
+            #     j = 0
+            #     # iterate each char
+            #     for k in range(len(content)):
+            #         if(k == match_idx[j][0]):
+            #             new_str = new_str + \
+            #                 '<span style="background-color:#FFB3FF">' + content[k]
+            #         elif(k == match_idx[j][1]):
+            #             new_str = new_str + '&nbsp</span>' + content[k]
+            #             j = j + 1
+            #             if(j >= len(match_idx)):
+            #                 new_str = new_str + content[k + 1:]
+            #                 break
+            #         else:
+            #             new_str = new_str + content[k]
+            #     # add span tag, it also add \n for no reason
+            #     content = new_str.replace('\n', ' ')
 
             output = '%s\t%s\t%d\t%d\t%d\n' % (
                 title, content, char_count, word_count, sentence_count)

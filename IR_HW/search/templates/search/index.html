@@ -20,11 +20,21 @@
             margin-top: 50px;
             margin-bottom: 50px;
         }
+        {% load static %}
+        .jumbotron{
+            background-image:url("/static/pubmed.jpg");
+            background-size: 100% 100%;
+            /* min-height: 500px; */
+        }
     </style>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/frappe-charts@1.1.0/dist/frappe-charts.min.iife.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 </head>
 
 <body>
+    <!-- <div class="jumbotron text-center">
+    </div> -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <!-- .navbar-brand 左上LOGO位置 -->
         <a class="navbar-brand" href="index.html">
@@ -90,12 +100,59 @@
                                     </summary>
                                     {{ one.content }}
                                     <div class="alert alert-info" role="alert">
-                                        <p>char_count: {{one.char_count}}</p>
-                                        <hr>
-                                        <p>word_count: {{one.word_count}}</p>
-                                        <hr>
-                                        <p>sentence_count: {{one.sentence_count}}</p>
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <p>char_count: {{one.char_count}}</p>
+                                            </div>
+                                            <!-- <hr> -->
+                                            <div class="col-4">
+                                                <p>word_count: {{one.word_count}}</p>
+                                            </div>
+                                            <!-- <hr> -->
+                                            <div class="col-4">
+                                                <p>sentence_count: {{one.sentence_count}}</p>
+                                            </div>
+                                        </div>
                                     </div>
+                                    <div class="col-12">
+                                        <canvas id = {{ one.index }} width="400" height="100"></canvas>
+                                    </div>
+                                    <div class="col-12">
+                                        <canvas id = {{ one.porter_index }} width="400" height="100"></canvas>
+                                    </div>
+                                    <script>
+                                        var ctx = document.getElementById('{{one.index | safe}}');
+
+                                        var chart = new Chart(ctx, {
+                                           type: 'line',
+                                           data: {
+                                           labels: {{ one.word }},
+                                           datasets: [{
+                                               label: 'original zipf distribution',
+                                               fill: false,
+                                               backgroundColor: 'rgb(255, 99, 132)',
+                                               borderColor: 'rgb(255, 99, 132)',
+                                               data: {{ one.freq }}
+                                           }]
+                                       },
+                                       });
+
+                                       var porter_ctx = document.getElementById('{{one.porter_index | safe}}');
+
+                                       var porter_chart = new Chart(porter_ctx, {
+                                          type: 'line',
+                                          data: {
+                                          labels: {{ one.porter_word }},
+                                          datasets: [{
+                                              label: 'porter algorithm zipf distribution',
+                                              fill: false,
+                                              backgroundColor: 'rgb(140, 255, 195)',
+                                              borderColor: 'rgb(140, 255, 195)',
+                                              data: {{ one.porter_freq }}
+                                          }]
+                                      },
+                                      });
+                                    </script>
                                 </details>
                             </td>
                         </tr>
@@ -104,7 +161,6 @@
             {% endautoescape %}
         </table>
     </div>
-
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>

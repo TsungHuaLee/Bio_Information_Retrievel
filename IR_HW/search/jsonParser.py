@@ -77,7 +77,7 @@ def jsonParser(file_name):
                 for word in match_idx:
                     temp = word[0]
                     if(idx.start() < temp):
-                        key_match_idx.append((word[0], word[1]))
+                        key_match_idx.append((word[0]-2, word[1]))
                         key.append(content[word[0]:word[1]])
                         break
 
@@ -87,7 +87,7 @@ def jsonParser(file_name):
                 for k in range(len(content)):
                     if(k == key_match_idx[j][0]):
                         temp = '<a href="https://twitter.com/search?q=%23' + key[j] + '&src=typd">'
-                        print(temp)
+                        # print(temp)
                         new_str = new_str + temp + content[k]
                     elif(k == key_match_idx[j][1]):
                         new_str = new_str + '</a>' + content[k]
@@ -100,7 +100,7 @@ def jsonParser(file_name):
                 # add span tag, it also add \n for no reason
                 content = new_str.replace('\n', ' ')
 
-                print(content)
+                # print(content)
 
             output = '%s\t%s\t%s\t%s\t%d\t%d\t%d\t%d\n' % (
                 user, content, date, urls, favorites, char_count, word_count, sentence_count)

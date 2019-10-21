@@ -14,14 +14,13 @@
             text-align: center;
         }
 
-        table {
-            margin-left: 100px;
-            margin-right: 100px;
-            margin-top: 50px;
-            margin-bottom: 50px;
+        #tweet {
+            margin-left: 50px;
+            margin-right: 50px;
         }
     </style>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 </head>
 
 <body>
@@ -48,8 +47,6 @@
                 </li>
             </ul>
         </div>
-
-
     </nav>
 
     <div class="container">
@@ -63,38 +60,98 @@
         </form>
         <br>
         <!-- search -->
-        <form action='search' method='GET'>
+        <form action='tweetsearch' method='GET'>
             <div class='form-group' , align="center">
-                <input type="text" placeholder="key" name="search">
+                <input type="text" placeholder="key" name="tweetsearch">
                 <button type='submit' class='btn btn-success'>search</button>
             </div>
         </form>
 
         <!-- body -->
-        <table class="search_result table table-striped" align="center" style="margin:10px 0px 0px 0px">
+        <div>
             {% autoescape off %}
             {% for one in data %}
-                <div>
-                    {{ one.user }}
-                    <div style="display:inline; float:right;">
-                        <font color='red'>Score:{{ one.score }}</font>
-                    </div>
+            <div id='tweet'>
+                <table>
+                    <tr>
+                        <td rowspan="2"><img src=../../static/twitter.png width=50 height=50></img></td>
+                        <td>
+                            <div style="font-size:30px; font-weight:bold; vertical-align:bottom;">{{ one.user }}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>@</td>
+                    </tr>
+                </table>
 
-                    <p>{{ one.content }}</p>
-                    <div class="alert alert-info" role="alert">
-                        <p>char_count: {{one.char_count}}</p>
-                        <hr>
-                        <p>word_count: {{one.word_count}}</p>
-                        <hr>
-                        <p>sentence_count: {{one.sentence_count}}</p>
-                    </div>
-                    <hr>
+                <div style="display:inline; float:right;">
+                    <font color='red'>Score:{{ one.score }}</font>
                 </div>
+
+                <p>{{ one.content }}</p>
+                <p>
+                    <font color="grey"> {{ one.date }}</font>
+                </p>
+                <div class="alert alert-info" role="alert">
+                    <div class="row">
+                        <div class="col-4">
+                            <p>char_count: {{one.char_count}}</p>
+                        </div>
+                        <!-- <hr> -->
+                        <div class="col-4">
+                            <p>word_count: {{one.word_count}}</p>
+                        </div>
+                        <!-- <hr> -->
+                        <div class="col-4">
+                            <p>sentence_count: {{one.sentence_count}}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <canvas id={{ one.index }} width="400" height="100"></canvas>
+                </div>
+                <div class="col-12">
+                    <canvas id = {{ one.porter_index }} width="400" height="100"></canvas>
+                </div>
+                <script>
+                    var ctx = document.getElementById('{{one.index | safe}}');
+
+                    var chart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: {{ one.word }},
+                            datasets: [{
+                                label: 'original zipf distribution',
+                                fill: false,
+                                backgroundColor: 'rgb(255, 99, 132)',
+                                borderColor: 'rgb(255, 99, 132)',
+                                data: {{ one.freq }}
+                            }]
+                        },
+                    });
+
+                    var porter_ctx = document.getElementById('{{one.porter_index | safe}}');
+
+                    var porter_chart = new Chart(porter_ctx, {
+                        type: 'line',
+                        data: {
+                            labels: {{ one.porter_word }},
+                            datasets: [{
+                                label: 'porter algorithm zipf distribution',
+                                fill: false,
+                                backgroundColor: 'rgb(140, 255, 195)',
+                                borderColor: 'rgb(140, 255, 195)',
+                                data: {{ one.porter_freq }}
+                            }]
+                        },
+                    });
+                </script>
+                <hr>
+            </div>
             {% endfor %}
             {% endautoescape %}
-        </table>
+        </div>
     </div>
-
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
