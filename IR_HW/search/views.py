@@ -65,6 +65,16 @@ def search(request):
         full_path = BASE_DIR + '/search/data/pubmed_data'
 
         data = full_text_match(full_path, key)
+        word_in_articals, freq_in_articals = zipf(data, True)
+        porter_word_in_articals, porter_freq_in_articals = porter_algo(data, True)
+        for index, i in enumerate(data):
+            data[index].word = word_in_articals[index]
+            data[index].freq = freq_in_articals[index]
+            data[index].porter_word = porter_word_in_articals[index]
+            data[index].porter_freq = porter_freq_in_articals[index]
+            data[index].index = index
+            data[index].porter_index = "porter"+str(index)
+
     return render(request, 'search/index.html', locals())
 
 
@@ -138,6 +148,15 @@ def tweetsearch(request):
         BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         full_path = BASE_DIR + '/search/data/twitter_data'
 
-        print(key)
+        # print(key)
         data = tweet_full_text_match(full_path, key)
+        word_in_articals, freq_in_articals = zipf(data, False)
+        porter_word_in_articals, porter_freq_in_articals = porter_algo(data, False)
+        for index, i in enumerate(data):
+            data[index].word = word_in_articals[index]
+            data[index].freq = freq_in_articals[index]
+            data[index].porter_word = porter_word_in_articals[index]
+            data[index].porter_freq = porter_freq_in_articals[index]
+            data[index].index = index
+            data[index].porter_index = "porter"+str(index)
     return render(request, 'search/twitter.html', locals())

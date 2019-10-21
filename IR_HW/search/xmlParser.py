@@ -90,7 +90,10 @@ def xmlParser(file_name):
             #             new_str = new_str + content[k]
             #     # add span tag, it also add \n for no reason
             #     content = new_str.replace('\n', ' ')
-
+            '''
+                some string have '\n', which will cause error
+            '''
+            content = content.replace('\n', ' ')
             output = '%s\t%s\t%d\t%d\t%d\n' % (
                 title, content, char_count, word_count, sentence_count)
 

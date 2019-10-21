@@ -4,6 +4,7 @@ data_path = "/home/tsung/CODE/Information-Retrieval/IR_HW/search/data/match_data
 
 color_table = ["#FFFF00", "#00FFFF"]
 
+
 class xmldata:
     def __init__(self, title=None, content=None, char_count=None, word_count=None, sentence_count=None, score=None):
         self.title = title
@@ -58,7 +59,7 @@ def full_text_match(file_name, key):
             match = False
             data = line.split('\t')
             # print("i = ",i, "len" , len(data), data[2])
-            i = i+1
+            i = i + 1
             title = data[0]
             content = data[1]
             char_count = data[2]
@@ -83,7 +84,7 @@ def full_text_match(file_name, key):
                 pre_score = score
 
             score = score * (10 ** weight)
-            
+
             # save matching data
             if(match == True):
                 match_data.append(
