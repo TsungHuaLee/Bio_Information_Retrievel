@@ -23,4 +23,6 @@ urlpatterns = [
     path('upload', views.upload_file),
     path('search', views.search),
     path('twitter', views.twitter),
+    path('tweetupload', views.tweetupload_file),
+    path('tweetsearch', views.tweetsearch),
 ]
