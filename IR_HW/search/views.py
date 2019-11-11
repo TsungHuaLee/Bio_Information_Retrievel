@@ -10,8 +10,6 @@ from .porter_stemer import porter_algo
 import os
 totol_num = 0
 
-filetype = 'xml'
-
 
 class xmldata:
     def __init__(self, title=None, content=None, char_count=None, word_count=None, sentence_count=None, score=None, word = None,
@@ -57,13 +55,11 @@ def index(request):
 
 
 def search(request):
-    global filetype
     if request.method == 'GET':
         key = request.GET.get('search')
 
         BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         full_path = BASE_DIR + '/search/data/pubmed_data'
-
         data = full_text_match(full_path, key)
         word_in_articals, freq_in_articals = zipf(data, True)
         porter_word_in_articals, porter_freq_in_articals = porter_algo(data, True)
@@ -79,7 +75,6 @@ def search(request):
 
 
 def upload_file(request):
-    global filetype
     if request.method == 'POST' and request.FILES['myfile']:
         myfile = request.FILES['myfile']
         fs = FileSystemStorage()
@@ -112,7 +107,6 @@ def twitter(request):
 
 
 def tweetupload_file(request):
-    global filetype
     if request.method == 'POST' and request.FILES['myfile']:
         myfile = request.FILES['myfile']
         fs = FileSystemStorage()

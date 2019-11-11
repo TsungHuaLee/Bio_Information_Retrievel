@@ -1,5 +1,9 @@
+from sklearn.feature_extraction.text import CountVectorizer
 import re
+import numpy as np
+import math
 
+pubmed_file = "/home/tsung/CODE/Information-Retrieval/IR_HW/search/data/pubmed_data"
 data_path = "/home/tsung/CODE/Information-Retrieval/IR_HW/search/data/match_data"
 
 color_table = ["#FFFF00", "#00FFFF"]
@@ -17,7 +21,6 @@ class xmldata:
 
 def match_and_insert(match, key, str, score, weight):
     new_str = ""
-    new_content = ""
     match_idx = []
 
     for idx in list(re.finditer(key, str.lower())):
@@ -45,6 +48,31 @@ def match_and_insert(match, key, str, score, weight):
     return match, str, score
 
 
+def tf_idf(title, content, total_document, key):
+    vectorizer = CountVectorizer()
+    # the number of occurrences of a word
+    X = vectorizer.fit_transform(title)
+    # all bag of words
+    word = vectorizer.get_feature_names()
+    word = np.asarray(word)
+
+    # calculate tf
+    term_freq = []
+    for one in X.toarray():
+        total_count = np.sum(one)
+        idx = np.where(word == key)
+        term_count = one[idx[0][0]]
+        term_freq.append(term_count/total_count)
+    # calculate idf
+    inverse_docu_freq = math.log10(total_document/len(title))
+
+    result = []
+    for i in term_freq:
+        result.append(i*inverse_docu_freq)
+
+    return result
+
+
 def full_text_match(file_name, key):
     key = key.lower()
     match = False
@@ -52,15 +80,19 @@ def full_text_match(file_name, key):
 
     key = key.split(' ')
 
+    match_ori_title = []
+    match_ori_content = []
+
     with open(file_name, "r", encoding='UTF-8') as inputFile:
         line = inputFile.readline()
         i = 0
         while line:
             match = False
             data = line.split('\t')
-            # print("i = ",i, "len" , len(data), data[2])
             i = i + 1
+            ori_title = data[0]
             title = data[0]
+            ori_content = data[1]
             content = data[1]
             char_count = data[2]
             word_count = data[3]
@@ -89,9 +121,17 @@ def full_text_match(file_name, key):
             if(match == True):
                 match_data.append(
                     xmldata(title, content, char_count, word_count, sentence_count, score))
+                match_ori_title.append(ori_title)
+                match_ori_content.append(ori_content)
+            # read next data
             line = inputFile.readline()
 
-        match_data.sort(key=lambda x: x.score, reverse=True)
+    tf_idf_result = tf_idf(match_ori_title, match_ori_content, i, key)
+
+    for idx, a in enumerate(match_data):
+        match_data[idx].score = tf_idf_result[idx]
+    # sort all match data
+    match_data.sort(key=lambda x: x.score, reverse=True)
 
     with open(data_path, 'w', encoding='UTF-8') as outputFile:
         for i in match_data:
@@ -100,3 +140,6 @@ def full_text_match(file_name, key):
             outputFile.write(output)
 
     return match_data
+
+if __name__ == '__main__':
+    full_text_match(pubmed_file, "dengue")

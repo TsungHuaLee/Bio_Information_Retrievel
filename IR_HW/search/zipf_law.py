@@ -55,41 +55,4 @@ def zipf(data, flag):
         total_freq.append(freq)
         total_word.append(word)
 
-    # all_word = []
-    # for one in data:
-    #     if flag:
-    #         artical = one.title + " " + one.content
-    #     else:
-    #         artical = one.content
-    #     token = nltk.word_tokenize(artical)
-    #     token_lower = [w.lower() for w in token]
-    #     # TODO: delete
-    #     # TODO: end
-    #     # TODO: delete
-    #     for i in token_lower:
-    #         why = True
-    #         for j in i:
-    #             if j in exclusive_token:
-    #                 why = False
-    #                 break
-    #         if why == True:
-    #             all_word.append(i)
-    #     # TODO: end
-    #     # TODO: delete
-    #     all_word = set(all_word)
-    #     all_word = list(all_word)
-    #     all_word.sort()
-    #     with open("./dict.txt", 'w') as fp:
-    #         fp.write('var dataset = [')
-    #         for i in all_word:
-    #             temp = i.replace('.','',1)
-    #             if temp.isdigit():
-    #                 continue
-    #             if i in exclusive_token:
-    #                 continue
-    #             output = '"' + i + '", '
-    #             fp.write(output)
-    #         fp.write('];')
-    #     print(len(all_word))
-    #     # TODO: end
     return total_word, total_freq
