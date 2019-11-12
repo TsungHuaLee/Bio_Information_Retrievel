@@ -231,7 +231,7 @@ def tf_idf(title, content, total_document, key, type = 2):
     return result
 
 
-def full_text_match(file_name, key, tf_idf_type = 2):
+def full_text_match(file_name, key):
     key = key.lower()
     match = False
     match_data = []
@@ -284,11 +284,10 @@ def full_text_match(file_name, key, tf_idf_type = 2):
             # read next data
             line = inputFile.readline()
 
-    print("tf_idf_type = ",tf_idf_type)
-    tf_idf_result = tf_idf(match_ori_title, match_ori_content, i, key, tf_idf_type)
+    tf_idf_result = tf_idf(match_ori_title, match_ori_content, i, key, 3)
 
     for idx, a in enumerate(match_data):
-        match_data[idx].score = round( np.sum(tf_idf_result[idx]), 5)
+        match_data[idx].score = np.sum(tf_idf_result[idx])
     # sort all match data
     match_data.sort(key=lambda x: x.score, reverse=True)
 

@@ -7,7 +7,7 @@ class zipf_data:
         self.freq = freq
 
 
-exclusive_token = ['br', '/b', 'nbsp', '>', '<', '&', '.', ')', '(', ':', ',', "'", "''", '$', '%', ';', '=', '+']
+exclusive_token = ['br', '/b', 'nbsp', '>', '<', '&', '.', ')', '(', ':', ',', "'", "''", '$', '%', ';', '=', '+', "#", "ffff00", "00FFFF", "span", "/span", "style=", "background-color"]
 
 
 def zipf(data, flag):
@@ -27,7 +27,7 @@ def zipf(data, flag):
             artical = one.title + " " + one.content
         else:
             artical = one.content
-        token = nltk.word_tokenize(artical)
+        token = nltk.word_tokenize(artical.lower())
         # token = re.split(r'\w+', artical)
         # token = artical.split()
         '''

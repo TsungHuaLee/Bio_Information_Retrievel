@@ -8,7 +8,7 @@ class zipf_data:
         self.freq = freq
 
 
-exclusive_token = ['br', '/b', 'nbsp', '>', '<', '&', '.', ')', '(', ':', ',', "'", "''", '$', '%', ';']
+exclusive_token = ['br', '/b', 'nbsp', '>', '<', '&', '.', ')', '(', ':', ',', "'", "''", '$', '%', ';', '=', '+', "#", "ffff00", "00ffff", "span", "/span", "style=", "background-color"]
 
 
 def porter_algo(data, flag):

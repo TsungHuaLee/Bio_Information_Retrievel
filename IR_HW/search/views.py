@@ -57,10 +57,10 @@ def index(request):
 def search(request):
     if request.method == 'GET':
         key = request.GET.get('search')
-
+        tf_idf_type = request.GET.get('tf_idf_type')
         BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         full_path = BASE_DIR + '/search/data/pubmed_data'
-        data = full_text_match(full_path, key)
+        data = full_text_match(full_path, key, int(tf_idf_type))
         word_in_articals, freq_in_articals = zipf(data, True)
         porter_word_in_articals, porter_freq_in_articals = porter_algo(data, True)
         for index, i in enumerate(data):
