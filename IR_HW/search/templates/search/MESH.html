@@ -1,0 +1,375 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.css" rel="stylesheet" type='text/css'>
+    <style>
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            text-align: center;
+        }
+
+        table {
+            margin-left: 100px;
+            margin-right: 100px;
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+        {% load static %}
+        .jumbotron{
+            background-image:url("/static/pubmed.jpg");
+            background-size: 100% 100%;
+            /* min-height: 500px; */
+        }
+
+        /*the container must be positioned relative:*/
+        .autocomplete {
+            position: relative;
+            display: inline-block;
+        }
+
+        input {
+            border: 1px solid transparent;
+            background-color: #f1f1f1;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        input[type=text] {
+            background-color: #f1f1f1;
+            width: 100%;
+        }
+
+        input[type=submit] {
+            background-color: DodgerBlue;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .autocomplete-items {
+            position: absolute;
+            border: 1px solid #d4d4d4;
+            border-bottom: none;
+            border-top: none;
+            z-index: 99;
+            /*position the autocomplete items to be the same width as the container:*/
+            top: 100%;
+            left: 0;
+            right: 0;
+        }
+
+        .autocomplete-items div {
+            padding: 10px;
+            cursor: pointer;
+            background-color: #fff;
+            border-bottom: 1px solid #d4d4d4;
+        }
+
+        /*when hovering an item:*/
+        .autocomplete-items div:hover {
+            background-color: #e9e9e9;
+        }
+
+        /*when navigating through the items using the arrow keys:*/
+        .autocomplete-active {
+            background-color: DodgerBlue !important;
+            color: #ffffff;
+        }
+    </style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+</head>
+
+<body>
+    <!-- <div class="jumbotron text-center">
+    </div> -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <!-- .navbar-brand 左上LOGO位置 -->
+        <a class="navbar-brand" href="/">
+            <span class="h3 mx-1">IR</span>
+        </a>
+        <!-- .navbar-toggler 漢堡式選單按鈕 -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <!-- .navbar-toggler-icon 漢堡式選單Icon -->
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <!-- .collapse.navbar-collapse 用於外層中斷點群組和隱藏導覽列內容 -->
+        <!-- 選單項目&漢堡式折疊選單 -->
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <!-- active表示當前頁面 -->
+                <li class="nav-item active">
+                    <a class="nav-link" href="/">PubMed<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href='/twitter'>Twitter</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href='/MESH'>MESH</a>
+                </li>
+            </ul>
+        </div>
+
+
+    </nav>
+
+    <div class="container">
+        <!-- upload file -->
+        <h1>MESH</h1>
+
+        <!-- <form method="post" enctype="multipart/form-data" action="upload">
+            {% csrf_token %}
+            <input type="file" name="myfile">
+            <button type="submit">Upload</button>
+        </form>
+        <br> -->
+
+        <form autocomplete="off" action='MESH_Search' method='GET', align="center">
+            <div class="autocomplete" class='form-group'>
+                <input id="myInput" type="text" placeholder="key" name="MESH_Search">
+            </div>
+            <button type='submit' class='btn btn-success'>search</button>
+
+            <div>
+                <label class="radio-inline">
+                    <input type="radio" name="tf_idf_type" value = "1" checked>Basic
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="tf_idf_type" value = "2">Augmented Frequency
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="tf_idf_type" value = "3">Title & Content
+                </label>
+            </div>
+        </form>
+
+        <!-- body -->
+        <table class="search_result table table-striped" align="center" style="margin:10px 0px 0px 0px">
+            {% autoescape off %}
+            {% for one in data %}
+                <tbody>
+                        <tr>
+                            <td>
+                                {{ one.title }}
+                                <div style="display:inline; float:right;">
+                                    <font color='red'>Score:{{ one.score }}</font>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <details>
+                                    <summary>Press to read more
+                                    </summary>
+                                    {{ one.content }}
+                                    <!-- <div class="alert alert-info" role="alert">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <p>char_count: {{one.char_count}}</p>
+                                            </div>
+                                            <div class="col-4">
+                                                <p>word_count: {{one.word_count}}</p>
+                                            </div>
+                                            <div class="col-4">
+                                                <p>sentence_count: {{one.sentence_count}}</p>
+                                            </div>
+                                        </div>
+                                    </div> -->
+                                    <div class="col-12">
+                                        <canvas id = {{ one.index }} width="400" height="100"></canvas>
+                                    </div>
+                                    <div class="col-12">
+                                        <canvas id = {{ one.porter_index }} width="400" height="100"></canvas>
+                                    </div>
+                                    <div class="alert alert-info" role="alert">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <p>{{ one.similarity }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <script>
+                                        var ctx = document.getElementById('{{one.index | safe}}');
+
+                                        var chart = new Chart(ctx, {
+                                           type: 'line',
+                                           data: {
+                                           labels: {{ one.word }},
+                                           datasets: [{
+                                               label: 'original zipf distribution',
+                                               fill: false,
+                                               backgroundColor: 'rgb(255, 99, 132)',
+                                               borderColor: 'rgb(255, 99, 132)',
+                                               data: {{ one.freq }}
+                                           }]
+                                       },
+                                       });
+
+                                       var porter_ctx = document.getElementById('{{one.porter_index | safe}}');
+
+                                       var porter_chart = new Chart(porter_ctx, {
+                                          type: 'line',
+                                          data: {
+                                          labels: {{ one.porter_word }},
+                                          datasets: [{
+                                              label: 'porter algorithm zipf distribution',
+                                              fill: false,
+                                              backgroundColor: 'rgb(140, 255, 195)',
+                                              borderColor: 'rgb(140, 255, 195)',
+                                              data: {{ one.porter_freq }}
+                                          }]
+                                      },
+                                      });
+                                    </script>
+                                </details>
+                            </td>
+                        </tr>
+                <tbody>
+            {% endfor %}
+            {% endautoescape %}
+        </table>
+
+    </div>
+
+    {% load static %}
+    <script src="{% static 'dict.js' %}"></script>
+    <script>
+        function autocomplete(inp, arr) {
+            /*the autocomplete function takes two arguments,
+            the text field element and an array of possible autocompleted values:*/
+            var currentFocus;
+            /*execute a function when someone writes in the text field:*/
+            inp.addEventListener("input", function(e) {
+                var a, b, i, val = this.value;
+                /*close any already open lists of autocompleted values*/
+                closeAllLists();
+                if (!val) {
+                    return false;
+                }
+                currentFocus = -1;
+                /*create a DIV element that will contain the items (values):*/
+                a = document.createElement("DIV");
+                a.setAttribute("id", this.id + "autocomplete-list");
+                a.setAttribute("class", "autocomplete-items");
+                /*append the DIV element as a child of the autocomplete container:*/
+                this.parentNode.appendChild(a);
+                /*for each item in the array...*/
+                for (i = 0; i < arr.length; i++) {
+                    if (editDistance(arr[i].toLowerCase(), val.toLowerCase()) < 3) {
+                        /*create a DIV element for each matching element:*/
+                        b = document.createElement("DIV");
+                        /*make the matching letters bold:*/
+                        b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+                        b.innerHTML += arr[i].substr(val.length);
+                        b.innerHTML = arr[i]
+                        /*insert a input field that will hold the current array item's value:*/
+                        b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+                        /*execute a function when someone clicks on the item value (DIV element):*/
+                        b.addEventListener("click", function(e) {
+                            /*insert the value for the autocomplete text field:*/
+                            inp.value = this.getElementsByTagName("input")[0].value;
+                            /*close the list of autocompleted values,
+                            (or any other open lists of autocompleted values:*/
+                            closeAllLists();
+                        });
+                        a.appendChild(b);
+                    }
+                }
+            });
+            /*execute a function presses a key on the keyboard:*/
+            inp.addEventListener("keydown", function(e) {
+                var x = document.getElementById(this.id + "autocomplete-list");
+                if (x) x = x.getElementsByTagName("div");
+                if (e.keyCode == 40) {
+                    /*If the arrow DOWN key is pressed,
+                    increase the currentFocus variable:*/
+                    currentFocus++;
+                    /*and and make the current item more visible:*/
+                    addActive(x);
+                } else if (e.keyCode == 38) { //up
+                    /*If the arrow UP key is pressed,
+                    decrease the currentFocus variable:*/
+                    currentFocus--;
+                    /*and and make the current item more visible:*/
+                    addActive(x);
+                } else if (e.keyCode == 13) {
+                    /*If the ENTER key is pressed, prevent the form from being submitted,*/
+                    e.preventDefault();
+                    if (currentFocus > -1) {
+                        /*and simulate a click on the "active" item:*/
+                        if (x) x[currentFocus].click();
+                    }
+                }
+            });
+
+            function addActive(x) {
+                /*a function to classify an item as "active":*/
+                if (!x) return false;
+                /*start by removing the "active" class on all items:*/
+                removeActive(x);
+                if (currentFocus >= x.length) currentFocus = 0;
+                if (currentFocus < 0) currentFocus = (x.length - 1);
+                /*add class "autocomplete-active":*/
+                x[currentFocus].classList.add("autocomplete-active");
+            };
+
+            function removeActive(x) {
+                /*a function to remove the "active" class from all autocomplete items:*/
+                for (var i = 0; i < x.length; i++) {
+                    x[i].classList.remove("autocomplete-active");
+                }
+            };
+
+            function closeAllLists(elmnt) {
+                /*close all autocomplete lists in the document,
+                except the one passed as an argument:*/
+                var x = document.getElementsByClassName("autocomplete-items");
+                for (var i = 0; i < x.length; i++) {
+                    if (elmnt != x[i] && elmnt != inp) {
+                        x[i].parentNode.removeChild(x[i]);
+                    }
+                }
+            };
+
+            function editDistance(a, b) {
+                var m = [], i, j, min = Math.min;
+
+                if (!(a && b)) return (b || a).length;
+
+                for (i = 0; i <= b.length; m[i] = [i++]);
+                for (j = 0; j <= a.length; m[0][j] = j++);
+
+                for (i = 1; i <= b.length; i++) {
+                    for (j = 1; j <= a.length; j++) {
+                        m[i][j] = b.charAt(i - 1) == a.charAt(j - 1)
+                            ? m[i - 1][j - 1]
+                            : m[i][j] = min(
+                                m[i - 1][j - 1] + 1,
+                                min(m[i][j - 1] + 1, m[i - 1 ][j] + 1))
+                    }
+                }
+
+                return m[b.length][a.length];
+            }
+
+            /*execute a function when someone clicks in the document:*/
+            document.addEventListener("click", function(e) {
+                closeAllLists(e.target);
+            });
+        }
+
+        /*initiate the autocomplete function on the "myInput" element, and pass along the countries array as possible autocomplete values:*/
+        autocomplete(document.getElementById("myInput"), dataset);
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+
+</html>
