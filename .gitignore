@@ -1,5 +1,4 @@
 /data/*
-/IR_HW/*.xml
 /IR_HW/search/data/*
 *.pyc
 /data
