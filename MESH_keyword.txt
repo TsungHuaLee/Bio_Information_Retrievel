@@ -1,0 +1,11 @@
+calcimycin:	antibiotic	a23187	calcimycin
+temefos:	difos	temefos	temephos	abate
+abattoirs:	abattoirs	house, slaughter	slaughterhouses	slaughter house	houses, slaughter	slaughter houses	abattoir	slaughterhouse
+abbreviations as topic:	acronyms as topic	abbreviations as topic
+abdomen:	abdomens	abdomen
+abdomen, acute:	abdomen, acute	acute abdomen	abdomens, acute	acute abdomens
+abdominal injuries:	injury, abdominal	abdominal injury	injuries, abdominal	abdominal injuries
+abdominal neoplasms:	neoplasm, abdominal	neoplasms, abdominal	abdominal neoplasms	abdominal neoplasm
+abdominal muscles:	pyramidalis muscle	quadratus abdomini	transverse abdominal	muscle, abdominal	muscles, pyramidalis	muscle, cremaster	abdominal, transverse	transversus abdominis	muscle, pyramidalis	abdominal muscles	muscles, abdominal	abdominal muscle	cremaster muscle	abdominis, quadratus	transverse abdominals	abdominals, transverse	abdomini, quadratus	muscles, cremaster	pyramidalis muscles	quadratus abdominis	cremaster muscles
+abducens nerve:	nerve vi, cranial	nerve vis	nerves, sixth cranial	nerve vi	nervus abducen	cranial nerve vis	abducens, nervus	sixth cranial nerves	nervus abducens	abducent nerves	nerve, abducent	abducen, nervus	nerve, sixth cranial	nerve vis, cranial	cranial nerve, sixth	abducent nerve	cranial nerve vi	nerve, abducens	abducens nerve	sixth cranial nerve
+neoplasms:	neoplasia	neoplasias	malignant neoplasm	neoplasms	benign neoplasms	neoplasms, benign	tumors	malignant neoplasms	tumor	malignancy	malignancies	neoplasms, malignant	neoplasm	cancer	neoplasm, benign	benign neoplasm	neoplasm, malignant	cancers

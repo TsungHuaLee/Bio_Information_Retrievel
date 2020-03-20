@@ -319,7 +319,7 @@ def load_from_api():
     indexMap = {}
     fout = open(output_name+str(file_cnt), 'w')
 
-    with open("MESH_keyword.txt", "r") as fp:
+    with open("Whole_MESH_keyword.txt", "r") as fp:
         line = fp.readline()
         while line:
             synonym = line.split("\t")

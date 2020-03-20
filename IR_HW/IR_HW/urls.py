@@ -25,4 +25,6 @@ urlpatterns = [
     path('twitter', views.twitter),
     path('tweetupload', views.tweetupload_file),
     path('tweetsearch', views.tweetsearch),
+    path('MESH', views.MESH),
+    path('MESH_Search', views.MESH_Search),
 ]

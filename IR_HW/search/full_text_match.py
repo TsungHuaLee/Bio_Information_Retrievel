@@ -2,6 +2,8 @@ from sklearn.feature_extraction.text import CountVectorizer
 import re
 import numpy as np
 import math
+from numpy import dot
+from numpy.linalg import norm
 
 pubmed_file = "/home/tsung/CODE/Information-Retrieval/IR_HW/search/data/pubmed_data"
 data_path = "/home/tsung/CODE/Information-Retrieval/IR_HW/search/data/match_data"
@@ -10,14 +12,14 @@ color_table = ["#FFFF00", "#00FFFF"]
 
 
 class xmldata:
-    def __init__(self, title=None, content=None, char_count=None, word_count=None, sentence_count=None, score=None):
+    def __init__(self, title=None, content=None, char_count=None, word_count=None, sentence_count=None, score=None, top_5_similarity = None):
         self.title = title
         self.content = content
         self.char_count = char_count
         self.word_count = word_count
         self.sentence_count = sentence_count
         self.score = score
-
+        self.similarity = similarity
 
 def match_and_insert(match, key, str, score, weight):
     new_str = ""
@@ -48,14 +50,32 @@ def match_and_insert(match, key, str, score, weight):
     return match, str, score
 
 
-def tf_idf(title, content, total_document, key, type = 2):
+# the feature should be N feature vector of article
+def similarity(feature):
+    top_5_similarity = []
+    for i in feature:
+        i = np.asarray(i)
+        cos_sim = []
+        for j in feature:
+            j = np.asarray(j)
+            cos_sim.append(dot(i, j)/(norm(i)*norm(j)))
+        cos_sim = np.array(cos_sim)
+        sort_cos_sim = np.argsort(-cos_sim)
+        top_5_similarity.append(sort_cos_sim[1:6])
+    return top_5_similarity
+
+
+def tf_idf(title, content, total_document, key, type = 1):
+    top_5_similarity = []
     if(type == 1):
-        artical = []
+        article = []
         for idx, one_title in enumerate(title):
-            artical.append((one_title + " " + content[idx]).lower())
+            article.append((one_title + " " + content[idx]).lower())
         vectorizer = CountVectorizer()
         # the number of occurrences of a word
-        X = vectorizer.fit_transform(artical)
+        X = vectorizer.fit_transform(article)
+        top_5_similarity = similarity(X.toarray())
+
         # all bag of words
         word = vectorizer.get_feature_names()
         word = np.asarray(word)
@@ -66,7 +86,7 @@ def tf_idf(title, content, total_document, key, type = 2):
             idx_of_word.append(np.where(word == i))
 
         # calculate tf
-        # size of term_freq == number of artical * number of query word
+        # size of term_freq == number of article * number of query word
         term_freq = []
         term_count = []
         # size of docu_freq == number of query word
@@ -94,12 +114,13 @@ def tf_idf(title, content, total_document, key, type = 2):
         term_freq = np.asarray(term_freq)
         result = term_freq * inverse_docu_freq
     elif(type == 2):
-        artical = []
+        article = []
         for idx, one_title in enumerate(title):
-            artical.append((one_title + " " + content[idx]).lower())
+            article.append((one_title + " " + content[idx]).lower())
         vectorizer = CountVectorizer()
         # the number of occurrences of a word
-        X = vectorizer.fit_transform(artical)
+        X = vectorizer.fit_transform(article)
+        top_5_similarity = similarity(X.toarray())
         # all bag of words
         word = vectorizer.get_feature_names()
         word = np.asarray(word)
@@ -110,7 +131,7 @@ def tf_idf(title, content, total_document, key, type = 2):
             idx_of_word.append(np.where(word == i))
 
         # calculate tf
-        # size of term_freq == number of artical * number of query word
+        # size of term_freq == number of article * number of query word
         term_freq = []
         term_count = []
         # size of docu_freq == number of query word
@@ -143,6 +164,7 @@ def tf_idf(title, content, total_document, key, type = 2):
         vectorizer = CountVectorizer()
         # the number of occurrences of a word
         X = vectorizer.fit_transform(title)
+        top_5_similarity = similarity(X.toarray())
         # all bag of words
         word = vectorizer.get_feature_names()
         word = np.asarray(word)
@@ -153,7 +175,7 @@ def tf_idf(title, content, total_document, key, type = 2):
             idx_of_word.append(np.where(word == i))
 
         # calculate tf
-        # size of term_freq == number of artical * number of query word
+        # size of term_freq == number of article * number of query word
         term_freq = []
         term_count = []
         # size of docu_freq == number of query word
@@ -196,7 +218,7 @@ def tf_idf(title, content, total_document, key, type = 2):
             idx_of_word.append(np.where(word == i))
 
         # calculate tf
-        # size of term_freq == number of artical * number of query word
+        # size of term_freq == number of article * number of query word
         term_freq = []
         term_count = []
         # size of docu_freq == number of query word
@@ -228,7 +250,7 @@ def tf_idf(title, content, total_document, key, type = 2):
         term_freq = np.asarray(term_freq)
         content_result = term_freq * inverse_docu_freq
         result = title_result + content_result
-    return result
+    return result, top_5_similarity
 
 
 def full_text_match(file_name, key, tf_idf_type = 2):
@@ -278,17 +300,30 @@ def full_text_match(file_name, key, tf_idf_type = 2):
             # save matching data
             if(match):
                 match_data.append(
-                    xmldata(title, content, char_count, word_count, sentence_count, score))
+                    xmldata(title, content, char_count, word_count, sentence_count, score, []))
                 match_ori_title.append(ori_title)
                 match_ori_content.append(ori_content)
             # read next data
             line = inputFile.readline()
 
     print("tf_idf_type = ",tf_idf_type)
-    tf_idf_result = tf_idf(match_ori_title, match_ori_content, i, key, tf_idf_type)
+    tf_idf_result, top_5_similarity = tf_idf(match_ori_title, match_ori_content, i, key, tf_idf_type)
+
+    top_5_similarity_title = []
+    for idx, each in enumerate(top_5_similarity):
+        print(top_5_similarity)
+        temp = []
+        for jdx, titleIdx in enumerate(each):
+            temp.append(match_ori_title[titleIdx])
+        top_5_similarity_title.append(temp)
 
     for idx, a in enumerate(match_data):
         match_data[idx].score = round( np.sum(tf_idf_result[idx]), 5)
+        concat = ""
+        for i in range(5):
+            concat = concat + str(i) +". "+ top_5_similarity_title[idx][i] + " <br> "
+        match_data[idx].similarity = concat
+
     # sort all match data
     match_data.sort(key=lambda x: x.score, reverse=True)
 

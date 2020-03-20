@@ -5,20 +5,24 @@ from .xmlParser import xmlParser
 from .jsonParser import jsonParser
 from .full_text_match import full_text_match
 from .tweet_full_text_match import tweet_full_text_match
+from .mesh_match import mesh_full_text_match
 from .zipf_law import zipf
 from .porter_stemer import porter_algo
 import os
 totol_num = 0
-
+import numpy as np
+import json
+synonym = []
 
 class xmldata:
-    def __init__(self, title=None, content=None, char_count=None, word_count=None, sentence_count=None, score=None, word = None,
+    def __init__(self, title=None, content=None, char_count=None, word_count=None, sentence_count=None, score=None, similarity = None, word = None,
                 freq = None, porter_word = None, porter_freq = None, index = None, porter_index = None):
         self.title = title
         self.content = content
         self.char_count = char_count
         self.word_count = word_count
         self.sentence_count = sentence_count
+        self.similarity = similarity
         self.score = score
         self.word = word
         self.freq = freq
@@ -70,7 +74,7 @@ def search(request):
             data[index].porter_freq = porter_freq_in_articals[index]
             data[index].index = index
             data[index].porter_index = "porter"+str(index)
-
+            print(data[index].similarity)
     return render(request, 'search/index.html', locals())
 
 
@@ -154,3 +158,50 @@ def tweetsearch(request):
             data[index].index = index
             data[index].porter_index = "porter"+str(index)
     return render(request, 'search/twitter.html', locals())
+
+def MESH(request):
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    return render(request, 'search/MESH.html', locals())
+
+
+def MESH_Search(request):
+    if request.method == 'GET':
+        key = request.GET.get('MESH_Search')
+        tf_idf_type = request.GET.get('tf_idf_type')
+        BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        full_path = BASE_DIR + '/search/data/subdata/subdata'
+        synonym = np.load(BASE_DIR + "/search/synonym.npy")
+        with open(os.path.join(BASE_DIR, "search/indexMap.txt"), "r") as fp:
+            indexMap = json.load(fp)
+
+        if(key in indexMap):
+            (file_num, synonym_idx) = indexMap[key]
+            full_path = full_path + str(file_num)
+
+            synonym_term = synonym[synonym_idx]
+            data = mesh_full_text_match(full_path, synonym_term, int(tf_idf_type))
+            word_in_articals, freq_in_articals = zipf(data, True)
+            porter_word_in_articals, porter_freq_in_articals = porter_algo(data, True)
+            for index, i in enumerate(data):
+                data[index].word = word_in_articals[index]
+                data[index].freq = freq_in_articals[index]
+                data[index].porter_word = porter_word_in_articals[index]
+                data[index].porter_freq = porter_freq_in_articals[index]
+                data[index].index = index
+                data[index].porter_index = "porter"+str(index)
+                print(data[index].similarity)
+        else:
+            tf_idf_type = request.GET.get('tf_idf_type')
+            BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            full_path = BASE_DIR + '/search/data/pubmed_data'
+            data = full_text_match(full_path, key, int(tf_idf_type))
+            word_in_articals, freq_in_articals = zipf(data, True)
+            porter_word_in_articals, porter_freq_in_articals = porter_algo(data, True)
+            for index, i in enumerate(data):
+                data[index].word = word_in_articals[index]
+                data[index].freq = freq_in_articals[index]
+                data[index].porter_word = porter_word_in_articals[index]
+                data[index].porter_freq = porter_freq_in_articals[index]
+                data[index].index = index
+                data[index].porter_index = "porter"+str(index)
+    return render(request, 'search/MESH.html', locals())
